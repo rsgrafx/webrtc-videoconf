@@ -1,52 +1,61 @@
+var webrtcDetectedVersion = null;
+var webrtcDetectedBrowser = null;
+window.requestFileSystem  = window.requestFileSystem || window.webkitRequestFileSystem;
+
 function initWebRTCAdapter() {
 	if (navigator.mozGetUserMedia) {
-		webrtcDetectedBrowser == "firefox";
+		webrtcDetectedBrowser = "firefox";
+    webrtcDetectedVersion = parseInt(navigator.userAgent.match(/Firefox\/([0-9]+)\./)[1], 10);
 		RTCPeerConnection 		= mozRTCPeerConnection;
 		RTCSessionDescription = mozRTCSessionDescription;
     RTCIceCandidate       = mozRTCIceCandidate;
-    getUserMedia = navigator.mozGetUserMedia.bind(navigator);
+    getUserMedia          = navigator.mozGetUserMedia.bind(navigator);
 
-    attachMediaStream =function(element, stream) {
-      element.mozSrcObject = stream;
-      element.play();
-    };
+    attachMediaStream =
+      function(element, stream) {
+        element.mozSrcObject = stream;
+        element.play();
+      };
 
-    reattachMediaStream = function(to, from) {
-      to.mozSrcObject = from.mozSrcObject;
-      to.play()
-    };
+    reattachMediaStream =
+      function(to, from) {
+        to.mozSrcObject = from.mozSrcObject;
+        to.play()
+      };
 
-    if (!MediaStream.prototype.getVideoTracks) {
-      MediaStream.prototype.getVideoTracks = function() { 
-        return []; 
-      }
-    };
 
-    if (!MediaStream.prototype.getAudioTracks) {
-      MediaStream.prototype.getAudioTracks = function() {
+      MediaStream.prototype.getVideoTracks =
+        function() { 
+          return []; 
+        };
+
+      MediaStream.prototype.getAudioTracks =
+       function() {
         return [];
-      }
-    };
+      };
     return true;
   } else if (navigator.webkitGetUserMedia) {
     webrtcDetectedBrowser = "chrome";
+    webrtcDetectedVersion = parseInt(navigator.userAgent.match(/Chrom(e|ium)\/([0-9]+)\./)[2], 10);
     RTCPeerConnection = webkitRTCPeerConnection;
     getUserMedia   = navigator.webkitGetUserMedia.bind(navigator);
 
-    attachMediaStream = function(element, stream) {
-      element.src = webkitURL.createObjectURl(stream);
-    }
-    reattachMediaStream = function(to, from) {
-      to.src = from.src;
-    }
+    attachMediaStream =
+      function(element, stream) {
+        element.src = webkitURL.createObjectURL(stream);
+      }
+    reattachMediaStream =
+      function(to, from) {
+        to.src = from.src;
+      }
     if(!webkitMediaStream.prototype.getVideoTracks) {
       webkitMediaStream.prototype.getVideoTracks = function() {
         return this.videoTracks;
       }
       webkitMediaStream.prototype.getAudioTracks = function() {
         return this.audioTracks;
-      }
-    }
+      };
+    };
     if (!webkitRTCPeerConnection.prototype.getLocalStreams) {
       webkitRTCPeerConnection.prototype.getLocalStreams = function() {
         return this.localStreams;
@@ -57,4 +66,4 @@ function initWebRTCAdapter() {
     }
     return true;
   } else return false;
-} // close of initWebRTCAdapter
+}; // close of initWebRTCAdapter
