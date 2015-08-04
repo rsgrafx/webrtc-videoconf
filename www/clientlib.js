@@ -130,7 +130,17 @@ function ____doGetUserMedia() {
 function onUserMediaSuccess(stream) {
   attachMediaStream(localVideo, stream);
   localStream = stream;
-  createPeerConnection();
+  // createPeerConnection();
+
+    var pc_contraints = {"optional": [{"DtlsSrtpKeyAgreement": true}]};
+  try {
+    pc = new RTCPeerConnection(pc_config, pc_constraints);
+    pc.onicecandidate = onIceCandidate;
+  } catch (e) {
+    pc = null;
+    return;
+  }
+  pc.onaddstream    = onRemoteStreamAdded;
   pc.addStream(localStream);
 
   if (initiator) doCall();

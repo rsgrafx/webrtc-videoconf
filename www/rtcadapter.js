@@ -42,7 +42,7 @@ function initWebRTCAdapter() {
 
     attachMediaStream =
       function(element, stream) {
-        element.src = webkitURL.createObjectURL(stream);
+        element.src = URL.createObjectURL(stream);
       }
     reattachMediaStream =
       function(to, from) {
