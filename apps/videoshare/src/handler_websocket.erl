@@ -67,7 +67,7 @@ websocket_terminate(_Reason, _Req, _State) ->
   ok.
 
 reply2peer(R, Room) ->
-  [P ! <<R/binary>> || P <- gproc:lookup_pids({p, l, Room}) -- self()].
+  [P ! <<R/binary>> || P <- gproc:lookup_pids({p, l, Room}) -- [self()]].
 
 generate_room() ->
   random:seed(now()),
