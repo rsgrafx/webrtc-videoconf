@@ -1,0 +1,1 @@
+erl -pa deps/*/ebin apps/*/ebin -saslerrlog_type error -s videoshare_app

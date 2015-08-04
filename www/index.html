@@ -1,0 +1,67 @@
+<html>
+<head>
+  <title>The Web is for Communicating.</title>
+  <script type="text/javascript" src="rtcadapter.js"></script>
+  <script type="text/javascript" src="clientlib.js"></script>
+  <style type="text/css">
+  section {
+    width: 90%;
+    height: 200px;
+    background: teal;
+    margin: auto;
+    padding: 10px;
+  }
+
+  div#lvideo {
+    width: 45%;
+    height: 100px;
+    background: black;
+    float: left;
+  }
+  div#rvideo {
+    width: 45%;
+    height: 100px;
+    background: black;
+  }
+</style>
+</head>
+<body onLoad="onPageLoad();">
+  <div status='status'></div>
+  <section>
+    <div id='lvideo'>
+      <video width='100%' height='100%' autoplay='autoplay' id='localvideo' muted='true'></video>
+    </div>
+    <div id='rvideo'>
+      <video width='100%' height='100%' autoplay='autoplay' id='remotevideo' muted='true'></video>
+    </div>
+  </section>
+
+  <script type="text/javascript">
+  
+  function onPageLoad() {
+    var _divV = document.getElementById('lvideo');
+    var _w = _divV.offsetWidth;
+    var _h = _w * 3/4;
+    _divV.offsetHeight = _h;
+    _divV.setAttribute("style", "height:" +_h+"px");
+    _divV.style.height=_h+'px';
+
+    _divV = document.getElementById('rvideo');
+    _divV.setAttribute("style", "height:" +_h+"px");
+    _divV.style.height=_h+'px';
+  }
+
+  initMyWebClient('ws://localhost:30000',
+    document.getElementById('localvideo'),
+    document.getElementById('remotevideo')
+    );
+
+  function OnRoomReceived(room) {
+    var st = document.getElementById("status")
+    st.innerHTML = "Now, if someone wants to join you use this link: <a href=\""
+    + window.location.href +"?room="
+    + room+"\">"+window.location.href+"?room="+room+"</a>";
+  }
+  </script>
+</body>
+</html>
