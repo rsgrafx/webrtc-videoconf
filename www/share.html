@@ -1,0 +1,71 @@
+<html>
+<head>
+  <title>Share with Me.</title>
+  <script type="text/javascript" src='rtcadapter.js'></script>
+  <script type="text/javascript" src='filedatashare.js'></script>
+</head>
+<body onload='onPageLoad()'>
+  <div id='status'></div>
+
+  <div>
+    <input type='file' id='files' name='files[]' multiple >
+    <output id='list'></output>
+  </div>
+
+  <div>
+    <button onclick='onSendBtnClick()'> Send </button>
+  </div>
+
+  <script>
+    var filelist;
+    function onPageLoad() {
+      if(window.File && window.FileReader && window.FileList && window.Blob ) {} else {
+        alert('The file apis are not available in the browser.');
+        return;
+      }
+      document.getElementById('files')
+      .addEventListener('change', handleFileSelect, false);
+      initClient('ws://localhost:30000')
+    }
+
+    function onSendBtnClick() {
+      for( var i = 0, f; f = filelist[i]; i++) {
+        var reader = FileReader();
+        reader.onload = (function(theFile) {
+          return function(evt) {
+            var msg = JSON.stringify({"type" : "file", "name" : theFile.name, "size": theFile.size, "data" : evt.target.result });
+            sendDataMessage(msg)
+          };
+        })(f);
+        reader.readAsDataURL(f);
+      }
+    }
+
+    function onRoomReceived(room) {
+      var st = document.getElementById('status');
+      var _url = window.location.href
+          _url += "?room=" + room
+      var _string = "STRING LINK" + 
+          _string += "<a href='" + _url
+          _string += "'/>"
+          _string += _url
+      st.innerHTML = _string; }
+
+      function onFileReceived( name, size, data) {
+        var output = [];
+        ouput.push('<li> just received a new file> <a href=' + data + '>',
+          name + '</a>', size, 'bytes', '</li>');
+        document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
+      }
+
+      function handleFileSelect(evt) {
+        var file = evt.target.files; filelist = files;
+        var output = [];
+        for( var i = 0, f; f = files[i]; i++) {
+          output.push('<li><strong>', escape(f.name), '</strong> (', f.type || 'n/a', ') - ', f.size, ' bytes, lastmodified: ', f.lastModifiedDate ? f.lastModifiedDate.toLocalDateString() : 'n/a', '</li>');
+        }
+        document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
+      }
+  </script>
+</body>
+</html>
